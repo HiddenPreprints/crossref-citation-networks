@@ -1,0 +1,41 @@
+---
+title: "demo_visualization"
+author: "Hao Ye"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Generate the citation network
+
+Load the data.
+
+```{r}
+library(rcrossref)
+library(tidyverse)
+
+crossref_query <- readRDS("test_data.RDS")
+crossref_data <- crossref_query$data
+```
+
+Extract the citation links from the crossref results:
+
+```{r}
+source("build_network.R")
+links <- extract_citation_links(crossref_data)
+```
+
+## Visualize the citation work
+
+```{r make graph}
+library(ggraph)
+
+net <- igraph::graph_from_data_frame(links)
+ggraph(net) +
+    geom_node_point() +
+    geom_edge_link() + 
+    theme_bw()
+```
